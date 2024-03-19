@@ -1,0 +1,21 @@
+﻿    tr:nth-child(even) {
+        background-color: #B4D7EA;
+    }
+
+    thead {
+        border-bottom: .25rem solid #000;
+    }
+
+td.amount:before {
+    content: "$";
+}
+
+th {
+    background-color: #3794C6;
+    text-align: center;
+}
+
+th, td {
+    border-right: .1rem solid #555;
+}
+

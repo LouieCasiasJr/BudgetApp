@@ -1,0 +1,36 @@
+﻿tr {
+    /*border-bottom: .1rem solid #555;*/
+}
+
+    tr:nth-child(even) {
+        background-color: #B4D7EA;
+    }
+
+    thead {
+        border-bottom: .25rem solid #000;
+    }
+
+td.amount:before {
+    content: "$";
+}
+
+
+.over_budget {
+    font-weight: 600;
+    color: #C66937;
+}
+
+.on_budget {
+    font-weight: 500;
+    color: #4DC637;
+}
+
+
+th {
+    background-color: #3794C6;
+    text-align: center;
+}
+
+th, td {
+    border-right: .1rem solid #555;
+}

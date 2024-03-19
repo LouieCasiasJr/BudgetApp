@@ -1,0 +1,47 @@
+﻿<table class="table">
+    <thead>
+        <tr>
+            <th align="center">Date</th>
+            <th align="center">Card</th>
+            <th align="center">Description</th>
+            <th align="center">Amount</th>
+            <th align="center">Reference</th>
+            <th align="center">Bucket</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var rep in Display)
+        {
+            <tr>
+                <td align="left">@rep.TransactionDate</td>
+                <td align="left">@rep.Card</td>
+                <td align="left">@rep.Description</td>
+                <td class="amount" align="right">@rep.Amount</td>
+                <td align="left">@rep.Reference</td>
+                <td align="left">@rep.BucketLabel</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    public IEnumerable<TransactionDisplayDTO>? Display = new List<TransactionDisplayDTO>();
+
+    [Parameter]
+    public SpendingReportDTO? Report { get; set; }
+
+    [Parameter]
+    public string? BucketLabel { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Report != null)
+        {
+            if (!string.IsNullOrWhiteSpace(BucketLabel))
+                Display = Report.SummaryDisplay?.Where(t => t.BucketLabel == BucketLabel);
+            else
+                Display = Report.SummaryDisplay;
+        }
+        base.OnInitialized();
+    }
+}
