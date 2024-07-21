@@ -1,6 +1,13 @@
-﻿<table class="table">
+﻿<button type="button" class="btn btn-submit" style="width: 100%; background-color: #3794C6">
+    <a class="text-white" href="/transactionview/@parameters">
+        <b>Transaction View</b>
+    </a>
+</button>
+
+<table class="table">
     <thead>
         <tr>
+            <th align="center"></th>
             <th align="center">Date</th>
             <th align="center">Card</th>
             <th align="center">Description</th>
@@ -13,6 +20,7 @@
         @foreach (var rep in Display)
         {
             <tr>
+                <td align="left">@counter</td>
                 <td align="left">@rep.TransactionDate</td>
                 <td align="left">@rep.Card</td>
                 <td align="left">@rep.Description</td>
@@ -20,12 +28,15 @@
                 <td align="left">@rep.Reference</td>
                 <td align="left">@rep.BucketLabel</td>
             </tr>
+            counter++;
         }
     </tbody>
 </table>
 
 @code {
     public IEnumerable<TransactionDisplayDTO>? Display = new List<TransactionDisplayDTO>();
+    private int counter = 1;
+    private string parameters = "";
 
     [Parameter]
     public SpendingReportDTO? Report { get; set; }
@@ -37,8 +48,13 @@
     {
         if (Report != null)
         {
+            parameters = $"{Report.Period}/";
+
             if (!string.IsNullOrWhiteSpace(BucketLabel))
+            {
+                parameters += $"{BucketLabel}";
                 Display = Report.SummaryDisplay?.Where(t => t.BucketLabel == BucketLabel);
+            }
             else
                 Display = Report.SummaryDisplay;
         }

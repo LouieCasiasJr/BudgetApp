@@ -9,6 +9,8 @@ public partial class SpendingBucket
 
     public string BucketLabel { get; set; } = null!;
 
+    public byte DefaultPriority { get; set; }
+
     public virtual ICollection<EstablishedLink> EstablishedLinks { get; set; } = new List<EstablishedLink>();
 
     public virtual ICollection<MonthlyBudget> MonthlyBudgets { get; set; } = new List<MonthlyBudget>();

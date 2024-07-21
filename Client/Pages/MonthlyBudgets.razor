@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/budgets"
 @inject BudgetReportService _reportServ
 
 <PageTitle>Dashboard</PageTitle>
@@ -12,18 +12,12 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th style="word-wrap: break-word; width: 200px;" align="center">
-                    <button type="button" class="btn btn-submit"><a class="text-white" href="/detailedview"><b>View with Buckets</b></a></button>
-                </th>
+                <th align="center"></th>
                 @foreach (var delt in deltas)
                 {
-                    @if (delt.BucketLabel == "TOTAL")
-                    {
-                        <th align="center">OVER/UNDER</th>
-                    }
+                    <th align="center">@delt.BucketLabel</th>
                 }
                 <th align="center">Budgeted</th>
-                <th align="center">Total Spent</th>
                 <th align="center"></th>
                 <th align="center">Income</th>
                 @foreach (var ct in CardTotals)
@@ -31,16 +25,12 @@ else
                     <th align="center">@ct.Key</th>
                 }
             </tr>
-@*             <tr>
-                <th style="word-wrap: break-word; width: 200px;" align="left"></th>
+            <tr>
+                <th align="left"></th>
                 @foreach (var delt in deltas)
                 {
-                    @if (delt.BucketLabel == "TOTAL")
-                    {
-                        <th align="center">@delt.Budget</th>
-                    }
+                    <th align="center">@delt.Budget</th>
                 }
-                <th align="center"></th>
                 <th align="center"></th>
                 <th align="center"></th>
                 <th align="center"></th>
@@ -48,41 +38,28 @@ else
                 {
                     <th align="center"></th>
                 }
-            </tr> *@
+            </tr>
         </thead>
         <tbody>
 
             @foreach (SpendingReportDTO rep in reports)
             {
                 <tr>
-                    <td align="left" style="word-wrap: break-word; width: 200px;">
+                    <td align="left">
                         <a @onclick="() => RedirectPage(rep)">@rep.Period</a>
                     </td>
                     @foreach (var delt in rep.Deltas)
                     {
-                        @if (delt.BucketLabel == "TOTAL")
-                        {
-                            <td class=@(delt.Delta > 0 ? "amount over_budget" : "amount on_budget" ) align="right">
-                                @delt.Delta
-                            </td>
-                        }
-                    }
-                    @{
-                        List<decimal> vals = new List<decimal>();
-                        decimal totalSpend = 0;
-                        foreach (var ct in rep.CardTotals)
-                        {
-                            vals.Add(ct.Value);
-                            totalSpend += @ct.Value;
-                        }
+                        <td class=@(delt.Delta > 0 ? "amount over_budget" : "amount on_budget" ) align="right">
+                            <a @onclick="() => RedirectPage(rep, delt)">@delt.Delta</a>
+                        </td>
                     }
                     <td class="amount" align="right">@rep.Budgeted</td>
-                    <td class="amount" align="right">@totalSpend</td>
                     <td align="right"></td>
                     <td class="amount" align="right">@rep.Income</td>
-                    @foreach (var cardTotalVal in vals)
+                    @foreach (var ct in rep.CardTotals)
                     {
-                        <td class="amount" align="right">@cardTotalVal</td>
+                        <td class="amount" align="right">@ct.Value</td>
                     }
                 </tr>
             }
@@ -116,7 +93,7 @@ else
 
     private async Task RedirectPage(SpendingReportDTO rep, SpendingBucketResultDTO? delta = null)
     {
-        if (!rep.Period.Contains("Average") && delta?.BucketLabel != "TOTAL")
+        if (!rep.Period.Contains("Average"))
         {
             var parameters = new Dictionary<string, object>();
             parameters.Add("Report", rep);
@@ -128,7 +105,7 @@ else
                 parameters.Add("BucketLabel", delta.BucketLabel);
             }
 
-            await modal.ShowAsync<MonthlySummaryPopup>(title: title, parameters: parameters);
+            await modal.ShowAsync<TransactionPopup>(title: title, parameters: parameters);
         }
     }
 

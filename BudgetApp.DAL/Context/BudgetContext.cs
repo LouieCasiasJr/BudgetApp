@@ -101,6 +101,7 @@ public partial class BudgetContext : DbContext
 
             entity.Property(e => e.BucketId).HasColumnName("BucketID");
             entity.Property(e => e.BucketLabel).HasMaxLength(50);
+            entity.Property(e => e.DefaultPriority).HasColumnName("DefaultPriority");
         });
 
         modelBuilder.Entity<Transaction>(entity =>
@@ -116,6 +117,7 @@ public partial class BudgetContext : DbContext
             entity.Property(e => e.Category).HasMaxLength(50);
             entity.Property(e => e.Description).HasMaxLength(150);
             entity.Property(e => e.Reference).HasMaxLength(25);
+            entity.Property(e => e.Priority).HasColumnName("Priority");
 
             entity.HasOne(d => d.Bucket).WithMany(p => p.Transactions)
                 .HasForeignKey(d => d.BucketId)

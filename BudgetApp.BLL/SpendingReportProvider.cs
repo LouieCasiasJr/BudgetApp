@@ -9,16 +9,20 @@ namespace BudgetApp.BLL
     {
         int incomeBucketID = 1;
         int ignoreBucketID = 25;
-        int savingID = 23;
+        //int savingID = 23;
         ITransactionProvider _transactionProvider;
         ISpendingBucketProvider _bucketProvider;
         IMonthlyBudgetProvider _monthlyBudgetProvider;
 
-        public SpendingReportProvider(ITransactionProvider repo, ISpendingBucketProvider repo2, IMonthlyBudgetProvider repo3)
+        private readonly IMapper _mapper;
+
+        public SpendingReportProvider(ITransactionProvider repo, ISpendingBucketProvider repo2, IMonthlyBudgetProvider repo3, 
+            IMapper mapper)
         {
             _transactionProvider = repo;
             _bucketProvider = repo2;
             _monthlyBudgetProvider = repo3;
+            _mapper = mapper;
         }
 
         public List<SpendingReportDTO> GetReportsToLastMonth(int numMonths = 12)
@@ -46,6 +50,7 @@ namespace BudgetApp.BLL
         {
             string[] periods = new string[numMonths];
 
+            // Make a list of months to include in the aggregate report
             for (int i = 0; i < numMonths; i++)
             {
                 DateTime prevMonth = DateTime.Now.AddMonths(-(i + 1));
@@ -83,8 +88,8 @@ namespace BudgetApp.BLL
                         sbr.Delta += dt.Delta;
                     }
                     else
-                        agg.Deltas.Add(new SpendingBucketResultDTO { BucketLabel = dt.BucketLabel, Delta = dt.Delta, Budget = dt.Budget });
-                        
+                        agg.Deltas.Add(new SpendingBucketResultDTO { BucketLabel = dt.BucketLabel, DefaultPriority = dt.DefaultPriority, 
+                            Delta = dt.Delta, Budget = dt.Budget });  
                 }
             }
 
@@ -164,12 +169,17 @@ namespace BudgetApp.BLL
             {
                 MonthlyBudgetDTO budget = budgets
                     .Where(bg => bg.BucketId == b.BucketId && (bg.StartDate <= d && (bg.EndDate == null || bg.EndDate >= d))).First();
-                if (budget.BucketId != savingID)
-                    budgeted += budget.Amount;
+
+                // Previous calc excluded savings amounts from the sum of spending, this imbalanced the reports -
+                // specific transactions can be ignored if desired
+                // if (budget.BucketId != savingID)
+                budgeted += budget.Amount;
 
                 SpendingBucketResultDTO sbr = new SpendingBucketResultDTO();
                 sbr.BucketLabel = b.BucketLabel;
+                sbr.DefaultPriority = b.DefaultPriority;
                 sbr.Budget = budget.Amount;
+
                 if (bucketAmounts.TryGetValue(b.BucketLabel, out decimal amount))
                     sbr.Delta = amount - budget.Amount;
                 else
@@ -180,7 +190,12 @@ namespace BudgetApp.BLL
 
             SpendingBucketResultDTO total = new SpendingBucketResultDTO();
             total.BucketLabel = "TOTAL";
-            total.Delta = sbrs.Where(x => x.BucketLabel != "Savings").Select(x => x.Delta).Sum();
+            total.DefaultPriority = 0;
+            total.Delta = sbrs.Select(x => x.Delta).Sum();
+
+            // Previous calc excluded savings amounts from the sum of spending, this imbalanced the reports -
+            // specific transactions can be ignored if desired
+            // total.Delta = sbrs.Where(x => x.BucketLabel != "Savings").Select(x => x.Delta).Sum();
             total.Budget = budgeted;
             sbrs.Add(total);
 
@@ -200,6 +215,7 @@ namespace BudgetApp.BLL
             display.Description = t.Description;
             display.Reference = t.Reference;
             display.BucketLabel = buckets.Where(b => b.BucketId == (int)t.BucketId).Select(b => b.BucketLabel).First();
+            display.Priority = t.Priority;
             return display;
         }
 

@@ -23,5 +23,7 @@ public partial class Transaction
 
     public int? BucketId { get; set; }
 
+    public byte? Priority { get; set; }
+
     public virtual SpendingBucket? Bucket { get; set; }
 }

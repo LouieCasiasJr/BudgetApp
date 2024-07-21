@@ -10,9 +10,9 @@ namespace BudgetApp.Server.Controllers;
 public class SpendingReportController : ControllerBase
 {
     ISpendingReportProvider _provider;
-    private readonly ILogger<TransactionController> _logger;
+    private readonly ILogger<SpendingReportController> _logger;
 
-    public SpendingReportController(ISpendingReportProvider provider, ILogger<TransactionController> logger)
+    public SpendingReportController(ISpendingReportProvider provider, ILogger<SpendingReportController> logger)
     {
         _provider = provider;
         _logger = logger;
