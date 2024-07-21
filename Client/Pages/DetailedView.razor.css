@@ -6,14 +6,26 @@
         background-color: #B4D7EA;
     }
 
-thead {
-    border-bottom: .25rem solid #000;
-}
+    tr:nth-child(odd) {
+        background-color: #FFF;
+    }
+
+    thead {
+        border-bottom: .25rem solid #000;
+    }
 
 td.amount:before {
     content: "$";
 }
 
+.sticky-col {
+    position: -webkit-sticky;
+    position: sticky;
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    left: 0px; /* Don't collapse */
+}
 
 .over_budget {
     font-weight: 600;
@@ -34,4 +46,8 @@ th {
 th, td {
     border-right: .1rem solid #555;
     border-left: .1rem solid #555;
+}
+
+td {
+    background-color: inherit !important
 }

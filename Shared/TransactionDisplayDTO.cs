@@ -15,4 +15,6 @@ public partial class TransactionDisplayDTO : BaseDTO
     public string? Reference { get; set; }
 
     public string BucketLabel { get; set; } = null!;
+
+    public byte? Priority { get; set; }
 }

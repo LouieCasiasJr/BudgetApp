@@ -6,6 +6,8 @@ namespace BudgetApp.BLL
     {
         public IEnumerable<TransactionDTO> GetAll();
 
+        public IEnumerable<TransactionDTO> GetAllWithParams(DateOnly? from, DateOnly? to, string[]? cards, int?[]? bucketIDs);
+        public IEnumerable<TransactionDisplayDTO> GetAllDisplayWithParams(DateOnly? from, DateOnly? to, string[]? cards, string?[]? buckets);
         public TransactionDTO GetByID(int id);
 
         public IEnumerable<TransactionDTO> GetAllAccounted();
@@ -18,9 +20,9 @@ namespace BudgetApp.BLL
 
         public IEnumerable<TransactionDTO> GetAccountedByDate_Cards(DateOnly from, DateOnly to, string[] cards);
 
-        public IEnumerable<TransactionDTO> GetAccountedByDate_Buckets(DateOnly from, DateOnly to, string[] cards, int?[] bucketIDs);
+        public IEnumerable<TransactionDTO> GetAccountedByDate_Buckets(DateOnly from, DateOnly to, int?[] bucketIDs);
 
-        public IEnumerable<TransactionDTO> GetAccountedByCards_Buckets(DateOnly from, DateOnly to, string[] cards, int?[] bucketIDs);
+        public IEnumerable<TransactionDTO> GetAccountedByCards_Buckets(string[] cards, int?[] bucketIDs);
 
         public IEnumerable<TransactionDTO> GetAccountedByDate_Cards_Buckets(DateOnly from, DateOnly to, string[] cards, int?[] bucketIDs);
 

@@ -1,0 +1,97 @@
+﻿@page "/detailedview"
+@inject BudgetReportService _reportServ
+
+<PageTitle>Dashboard</PageTitle>
+
+@if (reports == null)
+{
+    <p><em>@message</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th align="center"></th>
+                @foreach (var delt in deltas)
+                {
+                    <th align="center">@delt.BucketLabel</th>
+                }
+                <th align="center">Budgeted</th>
+            </tr>
+            <tr>
+                <th align="left"></th>
+                @foreach (var delt in deltas)
+                {
+                    <th align="center">@delt.Budget</th>
+                }
+                <th align="center"></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (SpendingReportDTO rep in reports)
+            {
+                <tr>
+                    <td class="sticky-col" align="left">
+                        <a @onclick="() => RedirectPage(rep)">@rep.Period</a>
+                    </td>
+                    @foreach (var delt in rep.Deltas)
+                    {
+                        <td class=@(delt.Delta > 0 ? "amount over_budget" : "amount on_budget" ) align="right">
+                            <a @onclick="() => RedirectPage(rep, delt)">@delt.Delta</a>
+                        </td>
+                    }
+                    <td class="amount" align="right">@rep.Budgeted</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <Modal @ref="modal" Size="ModalSize.ExtraLarge" />
+}
+
+@code {
+    private List<SpendingReportDTO> reports;
+    private List<SpendingBucketResultDTO> deltas;
+    private Modal modal = default!;
+
+    private string message = "Loading...";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await _reportServ.getReports();
+
+        if (response != null && response.IsSuccess)
+        {
+            reports = response.Data;
+            deltas = reports[0].Deltas;
+        }
+        else
+            message = response?.Message;
+    }
+
+    private async Task RedirectPage(SpendingReportDTO rep, SpendingBucketResultDTO? delta = null)
+    {
+        if (!rep.Period.Contains("Average") && delta?.BucketLabel != "TOTAL")
+        {
+            var parameters = new Dictionary<string, object>();
+            parameters.Add("Report", rep);
+            string title = rep.Period;
+            if (delta?.BucketLabel != null)
+            {
+                string bal = delta.Delta >= 0 ? "over" : "under";
+                title += $" {delta.BucketLabel} : ${delta.Budget} budgeted / ${delta.Delta} {bal} budget";
+                parameters.Add("BucketLabel", delta.BucketLabel);
+            }
+
+            await modal.ShowAsync<TransactionPopup>(title: title, parameters: parameters);
+        }
+    }
+
+    //https://htmlcolorcodes.com/color-picker/
+    //Green - #4DC637
+    //Orange - #C66937
+    //Purple - #B037C6
+        //Blue - #3794C6
+}

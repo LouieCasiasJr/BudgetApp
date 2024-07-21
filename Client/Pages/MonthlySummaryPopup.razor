@@ -1,0 +1,121 @@
+﻿@* <button type="button" class="btn btn-submit" style="width: 100%; background-color: #3794C6">
+    <a class="text-white" href="/transactionview/@parameters">
+        <b>Transaction View</b>
+    </a>
+</button> *@
+
+<table class="table">
+    <thead>
+        <tr>
+            <th align="center">Total</th>
+            <th align="center"></th>
+            <th align="center">Little/No Control</th>
+            <th align="center">Some Affect</th>
+            <th align="center">Mod Control</th>
+            <th align="center">Heavy Control</th>
+            <th align="center">Discretionary</th>
+        </tr>
+        <tr>
+            <th class="amount" align="right">@BTotal</th>
+            <th align="left"></th>
+            <th class="amount" align="right">@BOne</th>
+            <th class="amount" align="right">@BTwo</th>
+            <th class="amount" align="right">@BThree</th>
+            <th class="amount" align="right">@BFour</th>
+            <th class="amount" align="right">@BFive</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="amount" align="right">@Total</td>
+            <td align="left"></td>
+            <td class="amount" align="right">@One</td>
+            <td class="amount" align="right">@Two</td>
+            <td class="amount" align="right">@Three</td>
+            <td class="amount" align="right">@Four</td>
+            <td class="amount" align="right">@Five</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+    <div class="col-3">Little/No Control</div>
+    <div class="col-9">@string.Join(", ",OneList)</div>
+</p>
+<p>
+    <div class="col-3">Some Affect</div>
+    <div class="col-9">@string.Join(", ",TwoList)</div>
+</p>
+<p>
+    <div class="col-3">Moderate Control</div>
+    <div class="col-9">@string.Join(", ",ThreeList)</div>
+</p>
+<p>
+    <div class="col-3">Heavy Control</div>
+    <div class="col-9">@string.Join(", ",FourList)</div>
+</p>
+<p>
+    <div class="col-3">Discretionary</div>
+    <div class="col-9">@string.Join(", ",FiveList)</div>
+</p>
+
+
+@code {
+    public IEnumerable<TransactionDisplayDTO>? Display = new List<TransactionDisplayDTO>();
+    public decimal Total;
+    public decimal One;
+    public decimal Two;
+    public decimal Three;
+    public decimal Four;
+    public decimal Five; 
+    public decimal BTotal;
+    public decimal BOne;
+    public decimal BTwo;
+    public decimal BThree;
+    public decimal BFour;
+    public decimal BFive;
+    public List<string>? OneList;
+    public List<string>? TwoList;
+    public List<string>? ThreeList;
+    public List<string>? FourList;
+    public List<string>? FiveList;
+
+    [Parameter]
+    public SpendingReportDTO? Report { get; set; }
+
+    [Parameter]
+    public string? BucketLabel { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Report != null)
+        {
+            if (!string.IsNullOrWhiteSpace(BucketLabel))
+                Display = Report.SummaryDisplay?.Where(t => t.BucketLabel == BucketLabel);
+            else
+                Display = Report.SummaryDisplay;
+
+            if (Display != null)
+            {
+                Total = Display.Select(d => d.Amount).Sum();
+                One = Display.Where(d => d.Priority == 1).Select(d => d.Amount).Sum();
+                Two = Display.Where(d => d.Priority == 2).Select(d => d.Amount).Sum();
+                Three = Display.Where(d => d.Priority == 3).Select(d => d.Amount).Sum();
+                Four = Display.Where(d => d.Priority == 4).Select(d => d.Amount).Sum();
+                Five = Display.Where(d => d.Priority == 5).Select(d => d.Amount).Sum();
+                BTotal = Report.Budgeted;
+                OneList = Report.Deltas.Where(d => d.DefaultPriority == 1).Select(d => d.BucketLabel).ToList();
+                BOne = Report.Deltas.Where(d => d.DefaultPriority == 1).Select(d => d.Budget).Sum();
+                TwoList = Report.Deltas.Where(d => d.DefaultPriority == 2).Select(d => d.BucketLabel).ToList();
+                BTwo = Report.Deltas.Where(d => d.DefaultPriority == 2).Select(d => d.Budget).Sum();
+                ThreeList = Report.Deltas.Where(d => d.DefaultPriority == 3).Select(d => d.BucketLabel).ToList();
+                BThree = Report.Deltas.Where(d => d.DefaultPriority == 3).Select(d => d.Budget).Sum();
+                FourList = Report.Deltas.Where(d => d.DefaultPriority == 4).Select(d => d.BucketLabel).ToList();
+                BFour = Report.Deltas.Where(d => d.DefaultPriority == 4).Select(d => d.Budget).Sum();
+                FiveList = Report.Deltas.Where(d => d.DefaultPriority == 5).Select(d => d.BucketLabel).ToList();
+                BFive = Report.Deltas.Where(d => d.DefaultPriority == 5).Select(d => d.Budget).Sum();
+            }
+        }
+        base.OnInitialized();
+    }
+}

@@ -1,10 +1,10 @@
-﻿    tr:nth-child(even) {
-        background-color: #B4D7EA;
-    }
+﻿tr:nth-child(even) {
+    background-color: #B4D7EA;
+}
 
-    thead {
-        border-bottom: .25rem solid #000;
-    }
+thead {
+    border-bottom: .25rem solid #000;
+}
 
 td.amount:before {
     content: "$";
@@ -22,4 +22,3 @@ th, td {
 btn-submit {
     background-color: #3794C6
 }
-

@@ -19,4 +19,6 @@ public partial class TransactionDTO : BaseDTO
     public string? Reference { get; set; }
 
     public int? BucketId { get; set; }
+
+    public byte Priority { get; set; }
 }
