@@ -102,6 +102,7 @@ public partial class BudgetContext : DbContext
             entity.Property(e => e.BucketId).HasColumnName("BucketID");
             entity.Property(e => e.BucketLabel).HasMaxLength(50);
             entity.Property(e => e.DefaultPriority).HasColumnName("DefaultPriority");
+            entity.Property(e => e.DisplayOrder).HasColumnName("DisplayOrder");
         });
 
         modelBuilder.Entity<Transaction>(entity =>

@@ -7,4 +7,6 @@ public partial class SpendingBucketDTO: BaseDTO
     public string BucketLabel { get; set; } = null!;
 
     public byte DefaultPriority { get; set; }
+
+    public short DisplayOrder { get; set; }
 }

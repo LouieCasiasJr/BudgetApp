@@ -11,6 +11,8 @@ public partial class SpendingBucket
 
     public byte DefaultPriority { get; set; }
 
+    public short DisplayOrder { get; set; }
+
     public virtual ICollection<EstablishedLink> EstablishedLinks { get; set; } = new List<EstablishedLink>();
 
     public virtual ICollection<MonthlyBudget> MonthlyBudgets { get; set; } = new List<MonthlyBudget>();
