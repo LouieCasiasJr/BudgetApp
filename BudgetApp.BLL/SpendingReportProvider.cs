@@ -89,7 +89,7 @@ namespace BudgetApp.BLL
                     }
                     else
                         agg.Deltas.Add(new SpendingBucketResultDTO { BucketLabel = dt.BucketLabel, DefaultPriority = dt.DefaultPriority, 
-                            Delta = dt.Delta, Budget = dt.Budget });  
+                            DisplayOrder = dt.DisplayOrder, Delta = dt.Delta, Budget = dt.Budget });  
                 }
             }
 
@@ -102,6 +102,8 @@ namespace BudgetApp.BLL
             {
                 dt.Delta = decimal.Round((dt.Delta / numMonths), 2, MidpointRounding.AwayFromZero);
             }
+
+            agg.Deltas = agg.Deltas.OrderBy(x => x.DisplayOrder).ToList();
 
             return agg;
         }
@@ -178,6 +180,7 @@ namespace BudgetApp.BLL
                 SpendingBucketResultDTO sbr = new SpendingBucketResultDTO();
                 sbr.BucketLabel = b.BucketLabel;
                 sbr.DefaultPriority = b.DefaultPriority;
+                sbr.DisplayOrder = b.DisplayOrder;
                 sbr.Budget = budget.Amount;
 
                 if (bucketAmounts.TryGetValue(b.BucketLabel, out decimal amount))
@@ -191,6 +194,7 @@ namespace BudgetApp.BLL
             SpendingBucketResultDTO total = new SpendingBucketResultDTO();
             total.BucketLabel = "TOTAL";
             total.DefaultPriority = 0;
+            total.DisplayOrder = 500;
             total.Delta = sbrs.Select(x => x.Delta).Sum();
 
             // Previous calc excluded savings amounts from the sum of spending, this imbalanced the reports -
@@ -198,6 +202,8 @@ namespace BudgetApp.BLL
             // total.Delta = sbrs.Where(x => x.BucketLabel != "Savings").Select(x => x.Delta).Sum();
             total.Budget = budgeted;
             sbrs.Add(total);
+
+            sbrs = sbrs.OrderBy(x => x.DisplayOrder).ToList();
 
             return sbrs;
         }

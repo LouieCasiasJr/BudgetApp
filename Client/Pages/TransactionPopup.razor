@@ -52,7 +52,7 @@
 
             if (!string.IsNullOrWhiteSpace(BucketLabel))
             {
-                parameters += $"{BucketLabel}";
+                parameters += $"{Uri.EscapeDataString(BucketLabel)}";
                 Display = Report.SummaryDisplay?.Where(t => t.BucketLabel == BucketLabel);
             }
             else

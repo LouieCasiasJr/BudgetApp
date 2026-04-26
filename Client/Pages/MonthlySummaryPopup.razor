@@ -24,6 +24,15 @@
             <th class="amount" align="right">@BFour</th>
             <th class="amount" align="right">@BFive</th>
         </tr>
+        <tr>
+            <th class="amount" align="right"></th>
+            <th align="left"></th>
+            <th class="amount" align="right">@getPercentage(BOne)%</th>
+            <th class="amount" align="right">@getPercentage(BTwo)%</th>
+            <th class="amount" align="right">@getPercentage(BThree)%</th>
+            <th class="amount" align="right">@getPercentage(BFour)%</th>
+            <th class="amount" align="right">@getPercentage(BFive)%</th>
+        </tr>
     </thead>
     <tbody>
         <tr>
@@ -117,5 +126,10 @@
             }
         }
         base.OnInitialized();
+    }
+
+    public decimal getPercentage(decimal bucket)
+    {
+        return Math.Round(((bucket / BTotal) * 100), 2);
     }
 }

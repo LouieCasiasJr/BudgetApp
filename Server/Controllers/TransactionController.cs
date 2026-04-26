@@ -51,8 +51,8 @@ public class TransactionController : ControllerBase
     [HttpGet("AllDisplay")]
     public ResultPacket<List<TransactionDisplayDTO>> GetAllDisplay(string from = "01/01/2000", string to = "01/01/2099", string? bucket = null)
     {
-        DateOnly From = DateOnly.Parse(from);
-        DateOnly To = DateOnly.Parse(to);
+        DateOnly From = DateOnly.ParseExact(from, "MM/dd/yyyy");
+        DateOnly To = DateOnly.ParseExact(to, "MM/dd/yyyy");
         string?[] buckets = new string?[1] { bucket };
         var results = new ResultPacket<List<TransactionDisplayDTO>>();
         var items = new List<TransactionDisplayDTO>();

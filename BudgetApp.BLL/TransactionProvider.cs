@@ -2,6 +2,7 @@
 using BudgetApp.Shared;
 using BudgetApp.DAL;
 using System.Linq.Expressions;
+using System;
 using System.Linq;
 
 namespace BudgetApp.BLL
@@ -47,7 +48,9 @@ namespace BudgetApp.BLL
         public IEnumerable<TransactionDisplayDTO> GetAllDisplayWithParams(DateOnly? from, DateOnly? to, string[]? cards, string?[]? buckets)
         {
             IEnumerable<SpendingBucketDTO> SBs = _bucketProvider.GetAll();
-
+            int?[] IDs = buckets != null ? SBs.Where(b => buckets.Contains(b.BucketLabel)).Select(b => b.BucketId as int?).ToArray(): 
+                SBs.Select(b => b.BucketId as int?).ToArray();
+ 
             if (from == null)
                 from = DateOnly.ParseExact("01/01/2000", "MM/dd/yyyy");
             if (to == null)
@@ -57,7 +60,7 @@ namespace BudgetApp.BLL
             if (cards != null)
                 results = results.Where(t => cards.Contains(t.Card));
             if (buckets != null)
-                results = results.Where(t => buckets.Contains(t.Bucket.BucketLabel));
+                results = results.Where(t => IDs.Contains(t.BucketId));
 
             //List<TransactionDisplayDTO> ret = new List<TransactionDisplayDTO>();
             //foreach (Transaction t in results)
