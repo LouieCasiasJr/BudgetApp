@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.ResponseCompression;
 using BudgetApp.BLL;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.ConfigureBLLServices(builder.Configuration);
+builder.Services.AddHealthChecks()
+    .AddSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!);
 
 var app = builder.Build();
 
@@ -33,6 +34,7 @@ app.UseRouting();
 
 app.MapRazorPages();
 app.MapControllers();
+app.MapHealthChecks("/health");
 app.MapFallbackToFile("index.html");
 
 app.Run();
