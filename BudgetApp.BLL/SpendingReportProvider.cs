@@ -30,8 +30,8 @@ namespace BudgetApp.BLL
             DateTime s = DateTime.Now.AddMonths(-(numMonths));
             DateOnly start = DateOnly.FromDateTime(new DateTime(s.Year, s.Month, 1));
 
-            IEnumerable<TransactionDTO> transactions = _transactionProvider.GetAccountedByDate(start, start.AddMonths(numMonths).AddDays(-1));
-            IEnumerable<MonthlyBudgetDTO> budgets = _monthlyBudgetProvider.GetAllByDateRange(start, start.AddMonths(numMonths).AddDays(-1));
+            IEnumerable<TransactionDTO> transactions = _transactionProvider.GetAccountedByDate(start, start.AddMonths(numMonths).AddDays(-1)).ToList();
+            IEnumerable<MonthlyBudgetDTO> budgets = _monthlyBudgetProvider.GetAllByDateRange(start, start.AddMonths(numMonths).AddDays(-1)).ToList();
 
             List<SpendingReportDTO> reports = BuildByMonth(start, transactions, budgets, numMonths);
 
@@ -112,7 +112,7 @@ namespace BudgetApp.BLL
             IEnumerable<MonthlyBudgetDTO> budgets, int months)
         {
             List<SpendingReportDTO> monthlyReports = new List<SpendingReportDTO>();
-            IEnumerable<SpendingBucketDTO> buckets = _bucketProvider.GetAll();
+            IEnumerable<SpendingBucketDTO> buckets = _bucketProvider.GetAll().ToList();
             buckets = buckets.Where(b => b.BucketId != incomeBucketID && b.BucketId != ignoreBucketID);
 
             for (int i = 0; i < months; i++)
