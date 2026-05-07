@@ -1,4 +1,4 @@
-$env:SA_PASSWORD = (Get-Content .env | Where-Object { $_ -match "SA_PASSWORD" } -split "=")[1]
+$env:SA_PASSWORD = ((Get-Content .env | Where-Object { $_ -match "SA_PASSWORD" }) -split "=")[1]
 
 docker exec -i budgetapp-db-1 /opt/mssql-tools18/bin/sqlcmd `
   -S localhost `
