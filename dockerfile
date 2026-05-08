@@ -7,6 +7,7 @@ COPY BudgetApp.DAL/BudgetApp.DAL.csproj BudgetApp.DAL/
 COPY Client/BudgetApp.Client.csproj Client/
 COPY Server/BudgetApp.Server.csproj Server/
 COPY Shared/BudgetApp.Shared.csproj Shared/
+COPY Test/BudgetApp.Test.csproj Test/
 
 RUN dotnet restore
 

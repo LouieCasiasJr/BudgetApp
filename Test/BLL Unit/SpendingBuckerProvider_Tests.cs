@@ -7,6 +7,8 @@ using System.Linq.Expressions;
 
 namespace Test
 {
+    [TestFixture]
+    [Category("BLL")]
     public class SpendingBucketProviderTests
     {
         private Mock<ISpendingBucketRepo> _mockRepo;
@@ -72,8 +74,8 @@ namespace Test
         {
             _mockRepo
                 .Setup(r => r.GetWhere(It.IsAny<Expression<Func<SpendingBucket, bool>>>()))
-                .Returns((Func<SpendingBucket, bool> predicate) =>
-                    _buckets.Where(predicate));
+                .Returns((Expression<Func<SpendingBucket, bool>> predicate) =>
+                    _buckets.Where(predicate.Compile()));
 
             var result = _provider.GetByID(1);
 
@@ -101,8 +103,8 @@ namespace Test
         {
             _mockRepo
                 .Setup(r => r.GetWhere(It.IsAny<Expression<Func<SpendingBucket, bool>>>()))
-                .Returns((Func<SpendingBucket, bool> predicate) =>
-                    _buckets.Where(predicate));
+                .Returns((Expression<Func<SpendingBucket, bool>> predicate) =>
+                    _buckets.Where(predicate.Compile()));
 
             var result = _provider.GetByIDs(new[] { 1, 3 }).ToList();
 
