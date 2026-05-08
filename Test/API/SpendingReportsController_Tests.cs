@@ -1,9 +1,7 @@
 using BudgetApp.BLL;
 using BudgetApp.Shared;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Moq;
 using System.Net;
 using System.Net.Http.Json;
@@ -87,6 +85,7 @@ namespace Test
             var result = await _client
                 .GetFromJsonAsync<ResultPacket<List<SpendingReportDTO>>>("/SpendingReport/12");
 
+            Assert.That(result, Is.Not.Null);
             Assert.That(result.IsSuccess, Is.False);
             Assert.That(result.Message, Is.EqualTo("Failed to return spending reports"));
         }
@@ -117,8 +116,11 @@ namespace Test
             var response = await _client.GetAsync("/SpendingReport");
             var content = await response.Content.ReadAsStringAsync();
 
-            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(content, Does.Contain("<div id=\"app\">Loading...</div>"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(content, Does.Contain("<div id=\"app\">Loading...</div>"));
+            });
         }
 
         public void Dispose()
