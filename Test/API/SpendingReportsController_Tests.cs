@@ -119,7 +119,7 @@ namespace Test
             Assert.Multiple(() =>
             {
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                Assert.That(content, Does.Contain("<div id=\"app\">Loading...</div>"));
+                Assert.That(content, Does.Contain("<div id=\"app\">Loading</div>"));
             });
         }
 
