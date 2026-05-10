@@ -29,22 +29,26 @@ namespace Test
             new SpendingBucketDTO { BucketId = 3, BucketLabel = "Entertainment" },
         };
 
-        [SetUp]
-        public void Setup()
+        [OneTimeSetUp]
+        public void OneTimeSetup()
         {
             _mockRepo = new Mock<ISpendingBucketRepo>();
             _mockMapper = new Mock<IMapper>();
             _provider = new SpendingBucketProvider(_mockRepo.Object, _mockMapper.Object);
 
-            // Default mapper behaviour: match by BucketId
             _mockMapper
                 .Setup(m => m.Map<SpendingBucketDTO>(It.IsAny<SpendingBucket>()))
                 .Returns((SpendingBucket src) =>
                     _bucketDTOs.First(d => d.BucketId == src.BucketId));
         }
 
-        // GetAll
+        [SetUp]
+        public void SetUp()
+        {
+            _mockRepo.Reset();
+        }
 
+        // GetAll
         [Test]
         public void GetAll_ReturnsAllBucketsAsDTOs()
         {

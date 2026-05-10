@@ -10,11 +10,11 @@ namespace Test
 {
     [TestFixture]
     [Category("API")]
-    public class SpendingReportControllerIntegrationTests : IDisposable
+    public class SpendingReportControllerIntegrationTests
     {
-        private readonly Mock<ISpendingReportProvider> _mockProvider;
-        private readonly WebApplicationFactory<Program> _factory;
-        private readonly HttpClient _client;
+        private Mock<ISpendingReportProvider> _mockProvider;
+        private WebApplicationFactory<Program> _factory;
+        private HttpClient _client;
 
         private readonly List<SpendingReportDTO> _sampleReports = new()
         {
@@ -22,7 +22,8 @@ namespace Test
             new SpendingReportDTO { Period = "February 2025", Budgeted = 3000, Income = 5000 },
         };
 
-        public SpendingReportControllerIntegrationTests()
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
         {
             _mockProvider = new Mock<ISpendingReportProvider>();
 
@@ -31,7 +32,6 @@ namespace Test
                 {
                     builder.ConfigureServices(services =>
                     {
-                        // Remove the real provider registration and replace with mock
                         var descriptor = services.SingleOrDefault(
                             d => d.ServiceType == typeof(ISpendingReportProvider));
                         if (descriptor != null)
@@ -42,6 +42,19 @@ namespace Test
                 });
 
             _client = _factory.CreateClient();
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            _client.Dispose();
+            _factory.Dispose();
+        }
+
+        [SetUp]
+        public void SetUp()
+        {
+            _mockProvider.Reset();
         }
 
         [Test]
@@ -67,9 +80,12 @@ namespace Test
                 .GetFromJsonAsync<ResultPacket<List<SpendingReportDTO>>>("/SpendingReport/12");
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.IsSuccess, Is.True);
-            Assert.That(result.Data, Has.Count.EqualTo(2));
-            Assert.That(result.Data[0].Period, Is.EqualTo("January 2025"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.IsSuccess, Is.True);
+                Assert.That(result.Data, Has.Count.EqualTo(2));
+                Assert.That(result.Data[0].Period, Is.EqualTo("January 2025"));
+            });
         }
 
         [Test]
@@ -86,8 +102,11 @@ namespace Test
                 .GetFromJsonAsync<ResultPacket<List<SpendingReportDTO>>>("/SpendingReport/12");
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.IsSuccess, Is.False);
-            Assert.That(result.Message, Is.EqualTo("Failed to return spending reports"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.IsSuccess, Is.False);
+                Assert.That(result.Message, Is.EqualTo("Failed to return spending reports"));
+            });
         }
 
         [Test]
@@ -119,14 +138,8 @@ namespace Test
             Assert.Multiple(() =>
             {
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                Assert.That(content, Does.Contain("<div id=\"app\">Loading</div>"));
+                Assert.That(content, Does.Contain("<div id=\"app\">Loading...</div>"));
             });
-        }
-
-        public void Dispose()
-        {
-            _client.Dispose();
-            _factory.Dispose();
         }
     }
 }
