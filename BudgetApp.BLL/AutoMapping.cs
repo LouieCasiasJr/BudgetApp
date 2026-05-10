@@ -8,8 +8,6 @@ namespace BudgetApp.BLL
     {
         public AutoMapping()
         {
-            
-            
             CreateMap<Transaction, TransactionDTO>().ReverseMap();
             CreateMap<SpendingBucket, SpendingBucketDTO>().ReverseMap();
             CreateMap<MonthlyBudget, MonthlyBudgetDTO>().ReverseMap();
