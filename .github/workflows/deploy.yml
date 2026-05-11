@@ -24,6 +24,11 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
+      - name: Debug identity
+        run: |
+          az account show
+          az acr show --name budgetappacr --query loginServer
+    
       - name: Build and push image
         uses: docker/build-push-action@v7
         with:
