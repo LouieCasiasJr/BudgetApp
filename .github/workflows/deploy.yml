@@ -26,8 +26,8 @@ jobs:
 
       - name: Debug identity
         run: |
-          az account show
-          az acr show --name budgetappacr --query loginServer
+          az acr list --output table
+          az acr show --name budgetappacr --resource-group budget-app-rg --query loginServer
     
       - name: Build and push image
         uses: docker/build-push-action@v7
