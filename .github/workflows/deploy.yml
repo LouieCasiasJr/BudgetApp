@@ -20,11 +20,11 @@ jobs:
       - name: Log in to ACR
         run: az acr login --name budgetappacr
 
-      - name: Build and push image
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ secrets.ACR_LOGIN_SERVER }}/budget-app:latest
-            ${{ secrets.ACR_LOGIN_SERVER }}/budget-app:${{ github.sha }}
+      - name: Build and Push
+        run: |
+          docker build -t budgetappacr.azurecr.io/budget-app:${{ github.sha }} .
+          docker tag budgetappacr.azurecr.io/budget-app:${{ github.sha }} \
+            budgetappacr.azurecr.io/budget-app:latest
+          docker push budgetappacr.azurecr.io/budget-app:${{ github.sha }}
+          docker push budgetappacr.azurecr.io/budget-app:latest
+
