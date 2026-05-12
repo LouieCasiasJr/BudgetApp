@@ -28,5 +28,3 @@ jobs:
           tags: |
             ${{ secrets.ACR_LOGIN_SERVER }}/budget-app:latest
             ${{ secrets.ACR_LOGIN_SERVER }}/budget-app:${{ github.sha }}
-          cache-from: type=registry,ref=${{ secrets.ACR_LOGIN_SERVER }}/budget-app:latest
-          cache-to: type=inline
