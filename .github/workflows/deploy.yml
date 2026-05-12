@@ -18,13 +18,13 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Log in to ACR
-        run: az acr login --name budgetappacr
+        run: az acr login --name budgetappacr --login-server ${{ secrets.ACR_LOGIN_SERVER }}
 
       - name: Build and Push
         run: |
-          docker build -t budgetappacr.azurecr.io/budget-app:${{ github.sha }} .
-          docker tag budgetappacr.azurecr.io/budget-app:${{ github.sha }} \
-            budgetappacr.azurecr.io/budget-app:latest
-          docker push budgetappacr.azurecr.io/budget-app:${{ github.sha }}
-          docker push budgetappacr.azurecr.io/budget-app:latest
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/budget-app:${{ github.sha }} .
+          docker tag ${{ secrets.ACR_LOGIN_SERVER }}/budget-app:${{ github.sha }} \
+            ${{ secrets.ACR_LOGIN_SERVER }}/budget-app:latest
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/budget-app:${{ github.sha }}
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/budget-app:latest
 
