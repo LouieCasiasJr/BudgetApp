@@ -23,8 +23,8 @@ jobs:
       - name: Build and Push
         run: |
           docker build -t budgetappacr.azurecr.io/budget-app:${{ github.sha }} .
-          docker tag myappregistry.azurecr.io/budget-app:${{ github.sha }} \
-            myappregistry.azurecr.io/budget-app:latest
+          docker tag budgetappacr.azurecr.io/budget-app:${{ github.sha }} \
+            budgetappacr.azurecr.io/budget-app:latest
           docker push budgetappacr.azurecr.io/budget-app:${{ github.sha }}
           docker push budgetappacr.azurecr.io/budget-app:latest
 
