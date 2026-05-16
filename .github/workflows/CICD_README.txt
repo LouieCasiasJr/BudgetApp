@@ -26,3 +26,4 @@ Github secrets:
 	ACR_USERNAME  - Service principal client ID, used by docker/login
 
 Container Registry at `budgetappacr.azurecr.io/budget-app:<sha>`
+	Service principal is assigned "Container Registry Repository Writer" role in Azure.
