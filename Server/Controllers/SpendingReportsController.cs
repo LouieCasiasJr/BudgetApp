@@ -29,6 +29,7 @@ public class SpendingReportController : ControllerBase
         {
             results.IsSuccess = false;
             results.Message = $"Failed to return spending reports";
+            _logger.LogWarning("Operation failed: {Reason}", results.Message);
         }
         else
         {
