@@ -1,7 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
-using BudgetApp.Shared;
-using BudgetApp.DAL;
 using BudgetApp.BLL;
+using BudgetApp.DAL;
+using BudgetApp.Shared;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 
 namespace BudgetApp.Server.Controllers;
@@ -37,6 +38,7 @@ public class TransactionController : ControllerBase
         {
             results.IsSuccess = false;
             results.Message = $"Failed to return transactions {from} to {to}";
+            _logger.LogWarning("Operation failed: {Reason}", results.Message);
         }
         else
         {
@@ -66,6 +68,7 @@ public class TransactionController : ControllerBase
         {
             results.IsSuccess = false;
             results.Message = $"Failed to return transactions {from} to {to}";
+            _logger.LogWarning("Operation failed: {Reason}", results.Message);
         }
         else
         {

@@ -29,6 +29,7 @@ namespace BudgetApp.Server.Controllers
             {
                 results.IsSuccess = false;
                 results.Message = $"Failed to return spending buckets";
+                _logger.LogWarning("Operation failed: {Reason}", results.Message);
             }
             else
             {

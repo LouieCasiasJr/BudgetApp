@@ -13,11 +13,13 @@ Build pipeline
 Deploy pipeline: 
 	Runs on merge to main (with environment approval). 
 	Pushes two tags to Azure Container Registry: `latest` and the commit SHA.
+	Deploys current Github SHA to Azure Container App
 	deploy.yml:
 		Checks out the repo
 		Logs into Azure CLI (for subscription-level operations) with GH secret AZURE CREDENTIALS
 		Authenticates Docker to Azure Container Registry (Docker protocol) with separated values
 		Build and push the image to container registry, tagged with "Latest" and the SHA
+		Deploy to the container app - currently set to Dev - will later be parameterized for Github environments
 
 Github secrets:
 	AZURE_CREDENTIALS - Full JSON Azure login block
@@ -26,4 +28,4 @@ Github secrets:
 	ACR_USERNAME  - Service principal client ID, used by docker/login
 
 Container Registry at `budgetappacr.azurecr.io/budget-app:<sha>`
-	Service principal is assigned "Container Registry Repository Writer" role in Azure.
+	

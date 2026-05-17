@@ -13,7 +13,7 @@ namespace BudgetApp.Client
             _http = http;
         }
 
-        public async Task<ResultPacket<List<TransactionDisplayDTO>>> getAllTransactionDisplays(string from, string to, string bucket)
+        public async Task<ResultPacket<List<TransactionDisplayDTO>>> getAllTransactionDisplays(string from, string to, string? bucket)
         {
             NameValueCollection queryString = System.Web.HttpUtility.ParseQueryString(string.Empty);
 
