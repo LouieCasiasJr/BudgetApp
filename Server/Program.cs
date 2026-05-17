@@ -9,7 +9,16 @@ builder.Services.AddRazorPages();
 builder.Services.ConfigureBLLServices(builder.Configuration);
 builder.Services.AddHealthChecks()
     .AddSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!);
-builder.Services.AddApplicationInsightsTelemetry();
+
+// AppInsights connection string does not exist in all environments, so only invoke when it's found
+var appInsightsConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+if (!string.IsNullOrEmpty(appInsightsConnectionString))
+{
+    builder.Services.AddApplicationInsightsTelemetry(options =>
+    {
+        options.ConnectionString = appInsightsConnectionString;
+    });
+}
 
 var app = builder.Build();
 
