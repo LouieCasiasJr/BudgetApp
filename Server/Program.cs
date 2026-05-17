@@ -9,6 +9,7 @@ builder.Services.AddRazorPages();
 builder.Services.ConfigureBLLServices(builder.Configuration);
 builder.Services.AddHealthChecks()
     .AddSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!);
+builder.Services.AddApplicationInsightsTelemetry();
 
 var app = builder.Build();
 
