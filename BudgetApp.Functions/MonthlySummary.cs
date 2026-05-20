@@ -3,9 +3,7 @@ using Azure.Communication.Email;
 using BudgetApp.BLL;
 using BudgetApp.Shared;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Text;
 
 namespace BudgetApp.Functions
