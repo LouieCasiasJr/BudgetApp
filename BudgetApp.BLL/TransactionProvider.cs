@@ -138,7 +138,9 @@ namespace BudgetApp.BLL
             return results.Select(_mapper.Map<TransactionDTO>);
         }
 
-        private IEnumerable<Transaction> GetAccounted(Expression<Func<Transaction, bool>> func = null)
+        private IEnumerable<Transaction> GetAccounted() => GetAccounted(x => true);
+
+        private IEnumerable<Transaction> GetAccounted(Expression<Func<Transaction, bool>> func)
         {
             IEnumerable<Transaction> acct;
             if (func != null)

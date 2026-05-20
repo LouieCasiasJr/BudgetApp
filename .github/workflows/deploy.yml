@@ -29,5 +29,13 @@ jobs:
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/budget-app:latest
 
       - name: Deploy to Container Apps
-        run: |
-          az containerapp update --name budgetapp-dev --resource-group rg-budgetapp-dev --image ${{ secrets.ACR_LOGIN_SERVER }}/budget-app:${{ github.sha }}
+        run: az containerapp update --name budgetapp-dev --resource-group rg-budgetapp-dev --image ${{ secrets.ACR_LOGIN_SERVER }}/budget-app:${{ github.sha }}
+
+      - name: Build Functions
+        run: dotnet publish BudgetApp.Functions/BudgetApp.Functions.csproj --configuration Release --output ./functions-output
+
+      - name: Deploy to Function App
+        uses: azure/functions-action@v1
+        with:
+          app-name: func-budgetapp-dev
+          package: ./functions-output
