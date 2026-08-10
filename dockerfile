@@ -8,7 +8,6 @@ COPY Client/BudgetApp.Client.csproj Client/
 COPY Server/BudgetApp.Server.csproj Server/
 COPY Shared/BudgetApp.Shared.csproj Shared/
 COPY Test/BudgetApp.Test.csproj Test/
-COPY BudgetApp.Functions/BudgetApp.Functions.csproj BudgetApp.Functions/
 
 RUN dotnet restore
 

@@ -13,17 +13,20 @@ Azure service layout:
 			allowing the Container App to pull images from the registry
 	Container App (inside of a container app environment) runs the images held in the ACR and exposes them as
 		an available application at a url address
+	Function App runs the functions held in BudgetApp.Functions
+		Service principal is assigned "Website Contributor" role on the resource group to allow Function App deploy
+		The function app requires an Azure Storage Account
 	Database runs in Azure SQL Server
-	Logs and metrics are connected to Azure Application Insights
+	Logs and metrics are connected to Azure Application Insights 
 	Connection strings for Azure SQL DB and Application Insights are held in Azure Key Vault, consumed by 
-		Container Apps (secrets reference Key Vault Values, Environment Variables referencing those secrets)
+		Container (both) and Function (SQL Only) Apps (secrets reference Key Vault Values, Environment Variables referencing those secrets)
 
 Azure Key Vault:
 	Any user, including the owner, must have "Key Vault Secrets Officer" in order to edit secrets within the Key Vault
-	Container App's managed identity must have the role "Key Vault Secrets User" in order to read from the vault.
+	Container and Function App managed identities must have the role "Key Vault Secrets User" in order to read from the vault.
 Managed Identity:
-    The Container App uses a system-assigned Managed Identity to authenticate to both ACR and Key Vault without 
-    stored credentials.
+    The Container App uses system-assigned Managed Identity to authenticate to both ACR and Key Vault without stored credentials.
+	The Function App uses system-assigned Managed Identity to authenticate to Key Vault without stored credentials.
 
 Application HTTP logs can be accessed through application insights
 	Controllers are setup to return 200 with an error message on failure - manual log entries are also reflected 
