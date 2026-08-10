@@ -11,6 +11,7 @@ namespace BudgetApp.BLL
             CreateMap<Transaction, TransactionDTO>().ReverseMap();
             CreateMap<SpendingBucket, SpendingBucketDTO>().ReverseMap();
             CreateMap<MonthlyBudget, MonthlyBudgetDTO>().ReverseMap();
+            CreateMap<EstablishedLink, EstablishedLinkDTO>().ReverseMap();
 
             CreateMap<Transaction, TransactionDisplayDTO>() // uses MapFrom
                 .ForMember(td => td.BucketLabel, opt => opt.MapFrom<CustomResolver>());

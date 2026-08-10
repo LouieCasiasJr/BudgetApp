@@ -19,6 +19,7 @@ namespace BudgetApp.BLL
             services.AddTransient<IUnitOfWork, UnitofWork>();
 
             services.AddTransient<IEstablishedLinkRepo, EstablishedLinkRepository>();
+            services.AddTransient<IEstablishedLinkProvider, EstablishedLinkProvider>();
             services.AddTransient<IMonthlyBudgetRepo, MonthlyBudgetRepository>();
             services.AddTransient<IMonthlyBudgetProvider, MonthlyBudgetProvider>();
             services.AddTransient<ISpendingBucketRepo, SpendingBucketRepository>();

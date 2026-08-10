@@ -1,0 +1,143 @@
+<main class="main">
+  <div class="content">
+    <input type="file" class="file-input" accept=".csv" (change)="onFileSelected($event)" #fileUpload>
+    @if(successMessage != '') {
+    <div class='import-message success'>
+      <label>{{successMessage}}</label>
+    </div>
+    }
+    @if(returnMessage != '') {
+    <div class='import-message error'>
+      <label>{{returnMessage}}</label>
+    </div>
+    }
+    @if(imports().length === 0) {
+    <div class="importHeader">
+      <div class="file-upload">
+        <label>Choose one csv transaction file for upload.</label>
+        <button mat-mini-fab class="upload-btn" (click)="fileUpload.click()">
+          <mat-icon>file_upload</mat-icon>
+        </button>
+      </div>
+
+      <p>No transactions imported yet.</p>
+    </div>
+    }
+
+    @if(imports().length > 0) {
+    <div>
+      <div class="importHeader">
+        <div class="tXImport">
+          <label>{{imports().length + ' records for import'}}</label>
+          <button mat-mini-fab class="upload-btn" (click)="submitImports($event)">
+            <mat-icon>post_add</mat-icon>
+          </button>
+        </div>
+
+        <div class="EstablishedLinkForm">
+          <mat-form-field>
+            <mat-label>Category</mat-label>
+            <input matInput class='el_category' maxlength="50" [(ngModel)]="newLink().category">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Description Contains</mat-label>
+            <input matInput class='el_contains' maxlength="50"  [(ngModel)]="newLink().containsText">
+          </mat-form-field>
+          <!-- <input type="text" [(ngModel)]="newLink().containsText" placeholder="Description Contains"
+            class="el_contains"> -->
+          <mat-form-field>
+            <mat-label>Bucket</mat-label>
+            <mat-select [(ngModel)]="newLink().bucketId" class="bucketSelect">
+              <mat-option *ngFor="let bucket of buckets" [value]="bucket.bucketId">
+                {{ bucket.bucketLabel }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <button mat-mini-fab class="upload-btn" (click)="addEstablishedLink()">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <table mat-table [dataSource]="imports()" [trackBy]="trackBy">
+
+        <ng-container matColumnDef="EstablishLink">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let tX; let i = index">
+            <button mat-mini-fab (click)="establishLink(i)">
+              <mat-icon>copy_all</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Date">
+          <th mat-header-cell *matHeaderCellDef>Date</th>
+          <td mat-cell *matCellDef="let tX"> {{tX.transactionDate}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Card">
+          <th mat-header-cell *matHeaderCellDef>Card</th>
+          <td mat-cell *matCellDef="let tX"> {{tX.card}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Description">
+          <th mat-header-cell *matHeaderCellDef>Description</th>
+          <td mat-cell *matCellDef="let tX"> {{tX.description}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Amount">
+          <th mat-header-cell *matHeaderCellDef>Amount</th>
+          <td mat-cell *matCellDef="let tX" [ngClass]="tX.debit ? 'debit' : 'credit'">
+            {{tX.amount | currency:tX.currency:'symbol':'1.2-2' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Category">
+          <th mat-header-cell *matHeaderCellDef>Category</th>
+          <td mat-cell *matCellDef="let tX"> {{tX.category}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Reference">
+          <th mat-header-cell *matHeaderCellDef>Reference</th>
+          <td mat-cell *matCellDef="let tX">
+            <mat-form-field>
+              <input matInput value={{tX.reference}}>
+            </mat-form-field>
+        </ng-container>
+
+        <ng-container matColumnDef="Bucket">
+          <th mat-header-cell *matHeaderCellDef>Bucket</th>
+          <td mat-cell *matCellDef="let tX">
+            <mat-form-field>
+              <mat-select [(ngModel)]="tX.bucketId" class="bucketSelect">
+                <mat-option *ngFor="let bucket of buckets" [value]="bucket.bucketId">
+                  {{ bucket.bucketLabel }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Message">
+          <th mat-header-cell *matHeaderCellDef>Message</th>
+          <td mat-cell *matCellDef="let tX" class="error-cell"> {{tX.message}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Remove">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let tX; let i = index">
+            <button mat-mini-fab (click)="removeImport(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+    }
+  </div>
+</main>
+
+<router-outlet />

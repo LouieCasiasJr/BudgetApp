@@ -17,6 +17,12 @@ namespace BudgetApp.DAL
             return toadd;
         }
 
+        public List<T> AddRange<T>(List<T> toadd) where T : class
+        {
+            _dbContext.Set<T>().AddRange(toadd);
+            return toadd;
+        }
+
         public IQueryable<T> Getall<T>() where T : class
         {
             return _dbContext.Set<T>().AsNoTracking();
@@ -32,6 +38,12 @@ namespace BudgetApp.DAL
         {
             _dbContext.SaveChanges();
         }
+
+        public async Task SaveAsync()
+        {
+            var result = await _dbContext.SaveChangesAsync();
+        }
+
         public IQueryable<T> GetWhere<T>(Expression<Func<T, bool>> func) where T : class
         {
             return _dbContext.Set<T>()

@@ -15,6 +15,11 @@ namespace BudgetApp.DAL
             return _UoW.Add(toAdd);
         }
 
+        public IEnumerable<T> AddRange(List<T> toAdd)
+        {
+            return _UoW.AddRange(toAdd);
+        }
+
         public IEnumerable<T> GetAll()
         {
             return _UoW.Getall<T>();
@@ -48,6 +53,11 @@ namespace BudgetApp.DAL
         public void Save()
         {
             _UoW.Save();
+        }
+
+        public async Task SaveAsync()
+        {
+            await _UoW.SaveAsync();
         }
 
         public void Update(T toUpdate)

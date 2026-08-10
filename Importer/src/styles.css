@@ -1,0 +1,31 @@
+@use './material-theme';
+
+.mat-mdc-form-field .mat-mdc-form-field-subscript-wrapper.mat-mdc-form-field-bottom-align {
+  display: none;
+}
+
+.mat-mdc-text-field-wrapper.mdc-text-field {
+  background-color: var(--mat-sys-inverse-on-surface);
+}
+
+.mdc-line-ripple {
+  display: none;
+}
+
+.content {
+    max-width: 90vw;
+    text-align: center;
+    margin: 2vh auto;
+    width: 100%;
+    overflow: visible;
+}
+
+@media (width <=1000px) {
+    .content {
+        max-width: 100vw;
+        text-align: center;
+        margin: 0 auto;
+        width: 100%;
+        overflow: visible;
+    }
+}

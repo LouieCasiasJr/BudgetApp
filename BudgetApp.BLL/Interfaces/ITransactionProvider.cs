@@ -27,5 +27,7 @@ namespace BudgetApp.BLL
         public IEnumerable<TransactionDTO> GetAccountedByDate_Cards_Buckets(DateOnly from, DateOnly to, string[] cards, int?[] bucketIDs);
 
         public IEnumerable<TransactionDTO> GetIgnored();
+
+        public Task<ChangeResultPacket<TransactionDTO>> AddTransactions(List<TransactionDTO> items);
     }
 }

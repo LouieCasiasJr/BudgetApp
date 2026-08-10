@@ -11,8 +11,11 @@ namespace BudgetApp.DAL
     public interface IUnitOfWork : IDisposable
     {
         T Add<T>(T toadd) where T : class;
+        List<T> AddRange<T>(List<T> toadd) where T : class;
         IQueryable<T> Getall<T>() where T : class;
         void Save();
+        Task SaveAsync();
+
         IQueryable<T> GetWhere<T>(Expression<Func<T, bool>> func) where T : class;
         IQueryable<T> GetWhere<T>(Expression<Func<T, bool>> func, params Expression<Func<T, object>>[] joins) where T : class;
         IQueryable<T> GetWhere<T>(Expression<Func<T, bool>> func, List<string> joins) where T : class;

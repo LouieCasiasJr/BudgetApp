@@ -1,0 +1,73 @@
+.file-upload,
+.tXImport {
+  margin: 2em 0;
+  height: 40px;
+  display: inline-flex;
+}
+
+.file-upload label,
+.tXImport label,
+.import-message label {
+  display: inline-flex;
+  align-items: center;
+}
+
+
+.error label {
+  font: var(--mat-sys-headline-medium);
+  color: var(--mat-sys-error);
+}
+
+.success label {
+  font: var(--mat-sys-headline-medium);
+  color: var(--mat-sys-primary);
+}
+
+.importHeader {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--mat-sys-background);
+}
+
+.mat-mdc-header-row {
+  position: sticky;
+  top: 192px;  /* height of importHeader */
+  z-index: 10;
+}
+
+.upload-btn {
+  margin-left: 14px;
+}
+
+.EstablishedLinkForm {
+  display: inline-flex;
+  width: 100%;
+  margin: 2em 0;
+  justify-content: center;
+  align-items: center;
+}
+
+.file-input {
+  display: none;
+}
+
+.bucketSelect {
+  width: 12em;
+}
+
+table {
+  width: stretch
+}
+
+.error-cell {
+  color: var(--mat-sys-error);
+}
+
+.debit {
+  color: var(--mat-sys-error);
+}
+
+.credit {
+  color: var(--mat-sys-inverse-primary);
+}

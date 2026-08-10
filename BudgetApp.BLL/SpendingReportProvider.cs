@@ -113,7 +113,8 @@ namespace BudgetApp.BLL
         {
             List<SpendingReportDTO> monthlyReports = new List<SpendingReportDTO>();
             IEnumerable<SpendingBucketDTO> buckets = _bucketProvider.GetAll().ToList();
-            buckets = buckets.Where(b => b.BucketId != incomeBucketID && b.BucketId != ignoreBucketID);
+            List<int> activeBuckets = budgets.Select(b => b.BucketId).Distinct().ToList();
+            buckets = buckets.Where(b => activeBuckets.Contains(b.BucketId));
 
             for (int i = 0; i < months; i++)
             {
@@ -144,10 +145,10 @@ namespace BudgetApp.BLL
                         else
                             bucketAmounts.Add(label, t.Amount);
 
-                        if (cardAmounts.TryGetValue(t.Card, out decimal c))
-                            cardAmounts[t.Card] += t.Amount;
+                        if (cardAmounts.TryGetValue(t.Card.Trim(), out decimal c))
+                            cardAmounts[t.Card.Trim()] += t.Amount;
                         else
-                            cardAmounts.Add(t.Card, t.Amount);
+                            cardAmounts.Add(t.Card.Trim(), t.Amount);
                     }
 
                     report.SummaryDisplay = SummaryDisplay;
@@ -169,24 +170,25 @@ namespace BudgetApp.BLL
 
             foreach (SpendingBucketDTO b in buckets)
             {
-                MonthlyBudgetDTO budget = budgets
-                    .Where(bg => bg.BucketId == b.BucketId && (bg.StartDate <= d && (bg.EndDate == null || bg.EndDate >= d))).First();
+                MonthlyBudgetDTO? budget = budgets
+                    .Where(bg => bg.BucketId == b.BucketId && (bg.StartDate <= d && (bg.EndDate == null || bg.EndDate >= d))).FirstOrDefault();
+                decimal budgetAmount = budget == null ? 0 : budget.Amount;
 
                 // Previous calc excluded savings amounts from the sum of spending, this imbalanced the reports -
                 // specific transactions can be ignored if desired
                 // if (budget.BucketId != savingID)
-                budgeted += budget.Amount;
+                budgeted += budgetAmount;
 
                 SpendingBucketResultDTO sbr = new SpendingBucketResultDTO();
                 sbr.BucketLabel = b.BucketLabel;
                 sbr.DefaultPriority = b.DefaultPriority;
                 sbr.DisplayOrder = b.DisplayOrder;
-                sbr.Budget = budget.Amount;
+                sbr.Budget = budgetAmount;
 
                 if (bucketAmounts.TryGetValue(b.BucketLabel, out decimal amount))
-                    sbr.Delta = amount - budget.Amount;
+                    sbr.Delta = amount - budgetAmount;
                 else
-                    sbr.Delta = 0 - budget.Amount;
+                    sbr.Delta = 0 - budgetAmount;
 
                 sbrs.Add(sbr);
             }
@@ -217,7 +219,7 @@ namespace BudgetApp.BLL
             display.Amount = t.Amount;
             display.Debit = t.Debit;
             display.TransactionDate = t.TransactionDate;
-            display.Card = t.Card;
+            display.Card = t.Card.Trim();
             display.Description = t.Description;
             display.Reference = t.Reference;
             display.BucketLabel = buckets.Where(b => b.BucketId == (int)t.BucketId).Select(b => b.BucketLabel).First();

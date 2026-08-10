@@ -15,5 +15,7 @@ public partial class MonthlyBudget
 
     public decimal Amount { get; set; }
 
+    public string Currency { get; set; } = null!;
+
     public virtual SpendingBucket Bucket { get; set; } = null!;
 }

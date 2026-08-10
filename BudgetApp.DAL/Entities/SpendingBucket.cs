@@ -18,4 +18,6 @@ public partial class SpendingBucket
     public virtual ICollection<MonthlyBudget> MonthlyBudgets { get; set; } = new List<MonthlyBudget>();
 
     public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+
+    public virtual BudgetPriority? Priority { get; set; }
 }
