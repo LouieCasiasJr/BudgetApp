@@ -8,7 +8,7 @@ namespace BudgetApp.Server.Controllers
     [Route("[controller]")]
     public class MonthlyBudgetsController : ControllerBase
     {
-        IMonthlyBudgetProvider _provider;
+        private readonly IMonthlyBudgetProvider _provider;
         private readonly ILogger<MonthlyBudgetsController> _logger;
 
         public MonthlyBudgetsController(IMonthlyBudgetProvider provider, ILogger<MonthlyBudgetsController> logger)

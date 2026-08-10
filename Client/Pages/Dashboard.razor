@@ -68,13 +68,29 @@ else
                         }
                     }
                     @{
+                        List<string> allCards = CardTotals.Keys.ToList();
                         List<decimal> vals = new List<decimal>();
                         decimal totalSpend = 0;
-                        foreach (var ct in rep.CardTotals)
+
+                        for (int i = 0; i < allCards.Count(); i++)
                         {
-                            vals.Add(ct.Value);
-                            totalSpend += @ct.Value;
+                            decimal amount;
+                            if (rep.CardTotals.TryGetValue(allCards[i], out amount))
+                            {
+                                vals.Add(amount);
+                                totalSpend += amount;
+                            }
+                            else
+                            {
+                                vals.Add(0);
+                            }
                         }
+
+                        // foreach (var ct in rep.CardTotals)
+                        // {
+                        //     vals.Add(ct.Value);
+                        //     totalSpend += @ct.Value;
+                        // }
                     }
                     <td class="amount" align="right">@rep.Budgeted</td>
                     <td class="amount" align="right">@totalSpend</td>

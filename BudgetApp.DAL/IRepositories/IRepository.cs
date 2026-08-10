@@ -5,6 +5,7 @@ namespace BudgetApp.DAL
     public interface IRepository<T>
     {
         public T Add(T toAdd);
+        public IEnumerable<T> AddRange(List<T> toAdd);
         public IEnumerable<T> GetAll();
         public IEnumerable<T> GetAll(int page, int records);
         public IEnumerable<T> GetWhere(Expression<Func<T, bool>> func);
@@ -12,6 +13,7 @@ namespace BudgetApp.DAL
         public IEnumerable<T> GetWhere(Expression<Func<T, bool>> func, List<string> joins);
         public void Remove(T toRemove);
         public void Save();
+        public Task SaveAsync();
         public void Update(T toUpdate);
     }
 }

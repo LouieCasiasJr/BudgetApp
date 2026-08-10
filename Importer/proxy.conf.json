@@ -1,0 +1,17 @@
+{
+  "/EstablishedLinks": {
+    "target": "https://localhost:7174",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/Transaction": {
+    "target": "https://localhost:7174",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/SpendingBuckets": {
+    "target": "https://localhost:7174",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

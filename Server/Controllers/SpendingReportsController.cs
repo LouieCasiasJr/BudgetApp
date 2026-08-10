@@ -9,7 +9,7 @@ namespace BudgetApp.Server.Controllers;
 [Route("[controller]")]
 public class SpendingReportController : ControllerBase
 {
-    ISpendingReportProvider _provider;
+    private readonly ISpendingReportProvider _provider;
     private readonly ILogger<SpendingReportController> _logger;
 
     public SpendingReportController(ISpendingReportProvider provider, ILogger<SpendingReportController> logger)

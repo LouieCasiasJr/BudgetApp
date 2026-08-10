@@ -15,9 +15,7 @@ public partial class BudgetContext : DbContext
     {
     }
 
-    public virtual DbSet<CapitalOneTransaction> CapitalOneTransactions { get; set; }
-
-    public virtual DbSet<ChaseTransaction> ChaseTransactions { get; set; }
+    public virtual DbSet<BudgetPriority> BudgetPriorities { get; set; }
 
     public virtual DbSet<EstablishedLink> EstablishedLinks { get; set; }
 
@@ -37,36 +35,14 @@ public partial class BudgetContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<CapitalOneTransaction>(entity =>
+        modelBuilder.Entity<BudgetPriority>(entity =>
         {
-            entity.HasKey(e => e.CapitalOneTransactionId).HasName("PK_CapitalOneTransactionID");
+            entity.HasKey(e => e.PriorityId).HasName("PK_PriorityID");
 
-            entity.Property(e => e.CapitalOneTransactionId).HasColumnName("CapitalOneTransactionID");
-            entity.Property(e => e.Card)
-                .HasMaxLength(4)
-                .IsFixedLength();
-            entity.Property(e => e.Category).HasMaxLength(50);
-            entity.Property(e => e.Credit).HasColumnType("decimal(19, 2)");
-            entity.Property(e => e.Debit).HasColumnType("decimal(19, 2)");
-            entity.Property(e => e.Description).HasMaxLength(80);
-        });
-
-        modelBuilder.Entity<ChaseTransaction>(entity =>
-        {
-            entity.HasKey(e => e.ChaseTransactionId).HasName("PK_ChaseTransactionID");
-
-            entity.Property(e => e.ChaseTransactionId).HasColumnName("ChaseTransactionID");
-            entity.Property(e => e.Amount).HasColumnType("decimal(19, 2)");
-            entity.Property(e => e.Description).HasMaxLength(80);
-            entity.Property(e => e.Details)
-                .HasMaxLength(10)
-                .IsFixedLength();
-            entity.Property(e => e.RefNumber)
-                .HasMaxLength(10)
-                .IsFixedLength();
-            entity.Property(e => e.Type)
-                .HasMaxLength(10)
-                .IsFixedLength();
+            entity.Property(e => e.PriorityId).HasColumnName("PriorityID");
+            entity.Property(e => e.Description)
+                .HasMaxLength(50)
+                .IsRequired();
         });
 
         modelBuilder.Entity<EstablishedLink>(entity =>
@@ -93,6 +69,9 @@ public partial class BudgetContext : DbContext
             entity.Property(e => e.MonthlyBudgetId).HasColumnName("MonthlyBudgetID");
             entity.Property(e => e.Amount).HasColumnType("decimal(19, 2)");
             entity.Property(e => e.BucketId).HasColumnName("BucketID");
+            entity.Property(e => e.Currency)
+                .HasMaxLength(3).IsFixedLength()
+                .IsRequired();
 
             entity.HasOne(d => d.Bucket).WithMany(p => p.MonthlyBudgets)
                 .HasForeignKey(d => d.BucketId)
@@ -104,9 +83,16 @@ public partial class BudgetContext : DbContext
             entity.HasKey(e => e.BucketId).HasName("PK_BucketID");
 
             entity.Property(e => e.BucketId).HasColumnName("BucketID");
-            entity.Property(e => e.BucketLabel).HasMaxLength(50);
-            entity.Property(e => e.DefaultPriority).HasColumnName("DefaultPriority");
-            entity.Property(e => e.DisplayOrder).HasColumnName("DisplayOrder");
+            entity.Property(e => e.BucketLabel)
+                .HasMaxLength(50)
+                .IsRequired();
+            entity.Property(e => e.DefaultPriority);
+            entity.Property(e => e.DisplayOrder);
+
+            entity.HasOne(d => d.Priority).WithMany(p => p.Buckets)
+                .HasForeignKey(d => d.DefaultPriority)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SpendingBuckets_BudgetPriorities");
         });
 
         modelBuilder.Entity<Transaction>(entity =>
@@ -114,19 +100,28 @@ public partial class BudgetContext : DbContext
             entity.HasKey(e => e.TransactionId).HasName("PK_TransactionID");
 
             entity.Property(e => e.TransactionId).HasColumnName("TransactionID");
-            entity.Property(e => e.Amount).HasColumnType("decimal(19, 2)");
+            entity.Property(e => e.TransactionDate).HasColumnType("date")
+                .IsRequired();
+            entity.Property(e => e.Debit).HasColumnType("bit")
+                .IsRequired();
+            entity.Property(e => e.Amount).HasColumnType("decimal(19, 2)")
+                .IsRequired();
             entity.Property(e => e.BucketId).HasColumnName("BucketID");
             entity.Property(e => e.Card)
-                .HasMaxLength(8)
-                .IsFixedLength();
+                .HasMaxLength(8);
             entity.Property(e => e.Category).HasMaxLength(50);
             entity.Property(e => e.Description).HasMaxLength(150);
             entity.Property(e => e.Reference).HasMaxLength(25);
-            entity.Property(e => e.Priority).HasColumnName("Priority");
+            entity.Property(e => e.Priority);
+            entity.Property(e => e.Currency)
+                .HasMaxLength(3).IsFixedLength()
+                .IsRequired();
 
             entity.HasOne(d => d.Bucket).WithMany(p => p.Transactions)
                 .HasForeignKey(d => d.BucketId)
                 .HasConstraintName("FK_Transactions_SpendingBuckets");
+
+            
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -71,7 +71,7 @@ else
             label = Uri.UnescapeDataString(BucketLabel);
 
         Console.WriteLine(label);
-        var resp = await _tranServ.getAllTransactionDisplays(From.ToString("MM/dd/yyyy"), To.ToString("MM/dd/yyyy"), label);
+        var resp = await _tranServ.getAllTransactionDisplays(From.ToString("yyyy/MM/dd"), To.ToString("yyyy/MM/dd"), label);
 
         Display = resp.Data;
 

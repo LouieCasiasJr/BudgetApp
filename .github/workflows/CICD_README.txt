@@ -20,6 +20,8 @@ Deploy pipeline:
 		Authenticates Docker to Azure Container Registry (Docker protocol) with separated values
 		Build and push the image to container registry, tagged with "Latest" and the SHA
 		Deploy to the container app - currently set to Dev - will later be parameterized for Github environments
+		Build the functions (BudgetApp.Functions)
+		Deploy functions to the Azure Function App
 
 Github secrets:
 	AZURE_CREDENTIALS - Full JSON Azure login block

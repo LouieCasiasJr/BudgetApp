@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
-using BudgetApp.Shared;
 using BudgetApp.DAL;
-using System.Linq.Expressions;
+using BudgetApp.Shared;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Linq;
+using System.Linq.Expressions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BudgetApp.BLL
 {
@@ -30,16 +34,16 @@ namespace BudgetApp.BLL
         public IEnumerable<TransactionDTO> GetAllWithParams(DateOnly? from, DateOnly? to, string[]? cards, int?[]? bucketIDs)
         {
             if (from == null)
-                from = DateOnly.ParseExact("01/01/2000", "MM/dd/yyyy");
+                from = DateOnly.ParseExact("2000/01/01", "yyyy/MM/dd");
             if (to == null)
-                to = DateOnly.ParseExact("01/01/2099", "MM/dd/yyyy");
+                to = DateOnly.ParseExact("2099/01/01", "yyyy/MM/dd");
 
-            var results = _repo.GetWhere(t =>(t.TransactionDate >= from && t.TransactionDate <= to));
+            var results = _repo.GetWhere(t => (t.TransactionDate >= from && t.TransactionDate <= to));
 
             if (cards != null)
                 results = results.Where(t => cards.Contains(t.Card));
-            
-            if(bucketIDs != null)
+
+            if (bucketIDs != null)
                 results = results.Where(t => bucketIDs.Contains(t.BucketId));
 
             return results.Select(_mapper.Map<TransactionDTO>);
@@ -48,13 +52,13 @@ namespace BudgetApp.BLL
         public IEnumerable<TransactionDisplayDTO> GetAllDisplayWithParams(DateOnly? from, DateOnly? to, string[]? cards, string?[]? buckets)
         {
             IEnumerable<SpendingBucketDTO> SBs = _bucketProvider.GetAll();
-            int?[] IDs = buckets != null ? SBs.Where(b => buckets.Contains(b.BucketLabel)).Select(b => b.BucketId as int?).ToArray(): 
+            int?[] IDs = buckets != null ? SBs.Where(b => buckets.Contains(b.BucketLabel)).Select(b => b.BucketId as int?).ToArray() :
                 SBs.Select(b => b.BucketId as int?).ToArray();
- 
+
             if (from == null)
-                from = DateOnly.ParseExact("01/01/2000", "MM/dd/yyyy");
+                from = DateOnly.ParseExact("2000/01/01", "yyyy/MM/dd");
             if (to == null)
-                to = DateOnly.ParseExact("01/01/2099", "MM/dd/yyyy");
+                to = DateOnly.ParseExact("2099/01/01", "yyyy/MM/dd");
 
             var results = _repo.GetWhere(t => (t.TransactionDate >= from && t.TransactionDate <= to));
             if (cards != null)
@@ -155,6 +159,68 @@ namespace BudgetApp.BLL
         {
             var results = _repo.GetWhere(t => t.BucketId == ignoredBucketID);
             return results.Select(_mapper.Map<TransactionDTO>);
+        }
+
+        public async Task<ChangeResultPacket<TransactionDTO>> AddTransactions(List<TransactionDTO> items)
+        {
+            if (items == null || items.Count < 1)
+                return null;
+
+            ChangeResultPacket<TransactionDTO> resp = new ChangeResultPacket<TransactionDTO>();
+            List<Transaction> trans = new List<Transaction>();
+
+            try
+            {
+                resp = this.dupeCheck(items);
+                if (resp.SucccessSet != null && resp.SucccessSet.Count > 0)
+                {
+                    trans = resp.SucccessSet.Select(t => _mapper.Map<Transaction>(t)).ToList();
+                    _repo.AddRange(trans);
+                    await _repo.SaveAsync();
+                }
+
+                resp.SuccessCount = resp.SucccessSet?.Count();
+                resp.FailureCount = resp.FailureSet?.Count();
+            }
+            catch (Exception e)
+            {
+                resp = new ChangeResultPacket<TransactionDTO> { SucccessSet = null, FailureSet = null, SuccessCount = 0, FailureCount = items.Count };
+                resp.ErrorMessage = e.InnerException?.ToString() ?? e.Message;
+            }
+
+            return resp;
+        }
+
+
+        private ChangeResultPacket<TransactionDTO>  dupeCheck(List<TransactionDTO> transactions)
+        {
+            var minDate = transactions.Min(t => t.TransactionDate);
+            var maxDate = transactions.Max(t => t.TransactionDate);
+            var card = transactions[0].Card.Substring(0, 2);
+            var existing = _repo.GetWhere(t => t.TransactionDate >= minDate && t.TransactionDate <= maxDate && t.Card.StartsWith(card)).ToList();
+
+            var existingSet = existing
+                .Select(t => $"{t.TransactionDate:yyyy-MM-dd}|{t.Card.Trim()}|{t.Description.ToLower()}|{t.Debit}|{t.Amount}|{t.Reference?.ToLower()}")
+                .ToHashSet();
+
+            var failure = new List<TransactionDTO>();
+            var success = new List<TransactionDTO>();
+
+            foreach (var (tx, index) in transactions.Select((t, i) => (t, i)))
+            {
+                var fingerprint = $"{tx.TransactionDate:yyyy-MM-dd}|{tx.Card.Trim()}|{tx.Description.ToLower()}|{tx.Debit}|{tx.Amount}|{tx.Reference?.ToLower()}";
+
+                if (existingSet.Contains(fingerprint))
+                {
+                    tx.Message = "Duplicate in DB";
+                    failure.Add(tx);
+                    continue;
+                }
+
+                success.Add(tx);
+            }
+
+            return new ChangeResultPacket<TransactionDTO> { SucccessSet = success, FailureSet = failure };
         }
     }
 }

@@ -22,87 +22,21 @@ namespace BudgetApp.DAL.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BudgetApp.DAL.CapitalOneTransaction", b =>
+            modelBuilder.Entity("BudgetApp.DAL.BudgetPriority", b =>
                 {
-                    b.Property<int>("CapitalOneTransactionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("CapitalOneTransactionID");
+                    b.Property<byte>("PriorityId")
+                        .HasColumnType("tinyint")
+                        .HasColumnName("PriorityID");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CapitalOneTransactionId"));
-
-                    b.Property<string>("Card")
-                        .IsRequired()
-                        .HasMaxLength(4)
-                        .HasColumnType("nchar(4)")
-                        .IsFixedLength();
-
-                    b.Property<string>("Category")
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<decimal?>("Credit")
-                        .HasColumnType("decimal(19, 2)");
+                    b.HasKey("PriorityId")
+                        .HasName("PK_PriorityID");
 
-                    b.Property<decimal?>("Debit")
-                        .HasColumnType("decimal(19, 2)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
-
-                    b.Property<DateOnly>("TransactionDate")
-                        .HasColumnType("date");
-
-                    b.HasKey("CapitalOneTransactionId")
-                        .HasName("PK_CapitalOneTransactionID");
-
-                    b.ToTable("CapitalOneTransactions");
-                });
-
-            modelBuilder.Entity("BudgetApp.DAL.ChaseTransaction", b =>
-                {
-                    b.Property<int>("ChaseTransactionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("ChaseTransactionID");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChaseTransactionId"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(19, 2)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
-
-                    b.Property<string>("Details")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nchar(10)")
-                        .IsFixedLength();
-
-                    b.Property<DateOnly>("PostingDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("RefNumber")
-                        .HasMaxLength(10)
-                        .HasColumnType("nchar(10)")
-                        .IsFixedLength();
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nchar(10)")
-                        .IsFixedLength();
-
-                    b.HasKey("ChaseTransactionId")
-                        .HasName("PK_ChaseTransactionID");
-
-                    b.ToTable("ChaseTransactions");
+                    b.ToTable("BudgetPriorities");
                 });
 
             modelBuilder.Entity("BudgetApp.DAL.EstablishedLink", b =>
@@ -150,6 +84,12 @@ namespace BudgetApp.DAL.Migrations
                         .HasColumnType("int")
                         .HasColumnName("BucketID");
 
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nchar(3)")
+                        .IsFixedLength();
+
                     b.Property<DateOnly?>("EndDate")
                         .HasColumnType("date");
 
@@ -179,15 +119,15 @@ namespace BudgetApp.DAL.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<byte>("DefaultPriority")
-                        .HasColumnType("tinyint")
-                        .HasColumnName("DefaultPriority");
+                        .HasColumnType("tinyint");
 
                     b.Property<short>("DisplayOrder")
-                        .HasColumnType("smallint")
-                        .HasColumnName("DisplayOrder");
+                        .HasColumnType("smallint");
 
                     b.HasKey("BucketId")
                         .HasName("PK_BucketID");
+
+                    b.HasIndex("DefaultPriority");
 
                     b.ToTable("SpendingBuckets");
                 });
@@ -211,12 +151,17 @@ namespace BudgetApp.DAL.Migrations
                     b.Property<string>("Card")
                         .IsRequired()
                         .HasMaxLength(8)
-                        .HasColumnType("nchar(8)")
-                        .IsFixedLength();
+                        .HasColumnType("nvarchar(8)");
 
                     b.Property<string>("Category")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nchar(3)")
+                        .IsFixedLength();
 
                     b.Property<bool>("Debit")
                         .HasColumnType("bit");
@@ -227,8 +172,7 @@ namespace BudgetApp.DAL.Migrations
                         .HasColumnType("nvarchar(150)");
 
                     b.Property<byte?>("Priority")
-                        .HasColumnType("tinyint")
-                        .HasColumnName("Priority");
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Reference")
                         .HasMaxLength(25)
@@ -268,6 +212,17 @@ namespace BudgetApp.DAL.Migrations
                     b.Navigation("Bucket");
                 });
 
+            modelBuilder.Entity("BudgetApp.DAL.SpendingBucket", b =>
+                {
+                    b.HasOne("BudgetApp.DAL.BudgetPriority", "Priority")
+                        .WithMany("Buckets")
+                        .HasForeignKey("DefaultPriority")
+                        .IsRequired()
+                        .HasConstraintName("FK_SpendingBuckets_BudgetPriorities");
+
+                    b.Navigation("Priority");
+                });
+
             modelBuilder.Entity("BudgetApp.DAL.Transaction", b =>
                 {
                     b.HasOne("BudgetApp.DAL.SpendingBucket", "Bucket")
@@ -276,6 +231,11 @@ namespace BudgetApp.DAL.Migrations
                         .HasConstraintName("FK_Transactions_SpendingBuckets");
 
                     b.Navigation("Bucket");
+                });
+
+            modelBuilder.Entity("BudgetApp.DAL.BudgetPriority", b =>
+                {
+                    b.Navigation("Buckets");
                 });
 
             modelBuilder.Entity("BudgetApp.DAL.SpendingBucket", b =>

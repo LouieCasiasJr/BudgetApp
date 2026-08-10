@@ -1,10 +1,12 @@
 MonthlySummary Function:
+	Function App is deployed separate from the BudgetApp Container App as its own Azure Function App entity.
 	Triggered at 8AM on the first of every month to send an email.
 		Uses a TimerTrigger
 		Email includes an aggregate summary of the past 6 months of data, showing buckets that are over or under budget.
 	Directly hits the BLL SpendingReportProvider, depending also on the DAL and DTO (shared) projects.
 	Email send is handled through connection with Azure Communication Services - handled through global config variables
 		in local.settings.json, and also stored in the Key Vault, referenced in Azure Function App as Environment Variables. 
+	AzureSQl Server Firewall rules must allow the outbound IPs from the Function App (many possible IPs, individually added by script)
 	Logs warnings if unable to connect to Communication services, or if no data is found.
 
 Future plan: 

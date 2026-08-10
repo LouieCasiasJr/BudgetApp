@@ -25,5 +25,7 @@ public partial class Transaction
 
     public byte? Priority { get; set; }
 
+    public string Currency { get; set; } = null!;
+
     public virtual SpendingBucket? Bucket { get; set; }
 }

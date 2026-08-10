@@ -12,42 +12,6 @@ namespace BudgetApp.DAL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "CapitalOneTransactions",
-                columns: table => new
-                {
-                    CapitalOneTransactionID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TransactionDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    Card = table.Column<string>(type: "nchar(4)", fixedLength: true, maxLength: 4, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(80)", maxLength: 80, nullable: false),
-                    Category = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Debit = table.Column<decimal>(type: "decimal(19,2)", nullable: true),
-                    Credit = table.Column<decimal>(type: "decimal(19,2)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CapitalOneTransactionID", x => x.CapitalOneTransactionID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ChaseTransactions",
-                columns: table => new
-                {
-                    ChaseTransactionID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Details = table.Column<string>(type: "nchar(10)", fixedLength: true, maxLength: 10, nullable: false),
-                    PostingDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(80)", maxLength: 80, nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(19,2)", nullable: false),
-                    Type = table.Column<string>(type: "nchar(10)", fixedLength: true, maxLength: 10, nullable: false),
-                    RefNumber = table.Column<string>(type: "nchar(10)", fixedLength: true, maxLength: 10, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ChaseTransactionID", x => x.ChaseTransactionID);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "SpendingBuckets",
                 columns: table => new
                 {
@@ -149,12 +113,6 @@ namespace BudgetApp.DAL.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "CapitalOneTransactions");
-
-            migrationBuilder.DropTable(
-                name: "ChaseTransactions");
-
             migrationBuilder.DropTable(
                 name: "EstablishedLinks");
 
