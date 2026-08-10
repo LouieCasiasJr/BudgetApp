@@ -1,16 +1,14 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-COPY BudgetApp.sln ./
 COPY BudgetApp.BLL/BudgetApp.BLL.csproj BudgetApp.BLL/
 COPY BudgetApp.DAL/BudgetApp.DAL.csproj BudgetApp.DAL/
 COPY Client/BudgetApp.Client.csproj Client/
-COPY Importer/BudgetApp.Importer.csproj Importer/
 COPY Server/BudgetApp.Server.csproj Server/
 COPY Shared/BudgetApp.Shared.csproj Shared/
 COPY Test/BudgetApp.Test.csproj Test/
 
-RUN dotnet restore
+RUN dotnet restore Server/BudgetApp.Server.csproj
 
 COPY . .
 RUN dotnet publish Server/BudgetApp.Server.csproj -c Release -o /app/publish
